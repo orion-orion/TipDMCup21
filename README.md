@@ -4,9 +4,13 @@
  * @Author: ZhangHongYu
  * @Date: 2022-04-19 19:20:39
  * @LastEditors: ZhangHongYu
- * @LastEditTime: 2022-04-19 20:35:32
+ * @LastEditTime: 2022-04-19 21:07:14
 -->
 # 基于 Bagging 和深度学习的上市公司财务数据造假预测
+[![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/orion-orion/TipDMCup20)
+[![](https://img.shields.io/github/license/orion-orion/TipDMCup21)](https://github.com/orion-orion/TipDMCup21/LICENSE)
+[![](https://img.shields.io/github/stars/orion-orion/TipDMcup21?style=social)](https://github.com/orion-orion/TipDMCup21)
+[![](https://img.shields.io/github/issues/orion-orion/TipDMCup21)](https://github.com/orion-orion/TipDMCup21/issues)
 ### 赛题要求
 本项目为泰迪杯2021A题《基于 Bagging 和深度学习的上市公司财务数据造假预测》，赛题有三个小问，分别是：  
 1. 根据附件1的行业分类，利用附件2所提供的相关上市公司的财务数据，确定出各行业与财务数据造假相关的数据指标，并分析比较不同行业上市公司相关数据指标的异同。  
@@ -47,7 +51,7 @@ tensorflow-gpu (2.5.0)
 
 ```
 python main.py \
-    --features_model load \
+    --features_model retrain \
     --main_model retrain 
 ```
 
@@ -55,4 +59,9 @@ python main.py \
 
 `main_model`参数表示是否重新开始训练主模型（即bagging+深度学习模型），若需重新训练主模型可将 `main_model `参数设置为 `retrain `，否则设置为 `load`直接加载已经训练并保存好的模型（但前提是模型已经放置于 `model`目录下）。
 
+为了免去大家训练特征选择模型和主模型的麻烦，我这里将特征选择模型和主模型都上传到了百度网盘，大家可自行下载分别放在项目目录中的`features_model`和`model`文件夹下。
+
+下载链接: https://pan.baidu.com/s/1Ijdt8_VzKPvmkED4EbMXHg 
+
+提取码: o143
 
