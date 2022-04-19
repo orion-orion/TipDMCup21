@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: ZhangHongYu
+ * @Date: 2022-04-19 19:20:39
+ * @LastEditors: ZhangHongYu
+ * @LastEditTime: 2022-04-19 20:35:32
+-->
 # 基于 Bagging 和深度学习的上市公司财务数据造假预测
 ### 赛题要求
 本项目为泰迪杯2021A题《基于 Bagging 和深度学习的上市公司财务数据造假预测》，赛题有三个小问，分别是：  
@@ -36,9 +44,15 @@ tensorflow-gpu (2.5.0)
 
 ### 使用方法
 运行:
+
 ```
-python3 main.py
+python main.py \
+    --features_model load \
+    --main_model retrain 
 ```
-（默认从零开始训练用于特征选择的模型和集成学习模型，如果已经训练好只需注释掉对训练函数的调用，直接加载已保存的模型即可，其中特征选择的模型的训练在feature_eng.py中实现）
+
+`features_model`参数表示选择是否重新开始训练特征选择模型，若需重新训练特征选择模型可将 `feature_model `参数设置为 `retrain `，否则设置为 `load`直接加载已经选取好的特征。
+
+`main_model`参数表示是否重新开始训练主模型（即bagging+深度学习模型），若需重新训练主模型可将 `main_model `参数设置为 `retrain `，否则设置为 `load`直接加载已经训练并保存好的模型（但前提是模型已经放置于 `model`目录下）。
 
 

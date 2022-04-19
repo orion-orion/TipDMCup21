@@ -8,12 +8,11 @@ __pycache__/
 # data/*.csv
 
 # model files
-features_model/
+features_model/*
+!features_model/
 model/*
+!model/
 
-# draw pic file
-plot_roc1.py
-plot_roc2.py
 
 # bash file
 run.sh
