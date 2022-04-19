@@ -8,14 +8,14 @@ __pycache__/
 # data/*.csv
 
 # roc_curve_pic
-roc_curve/*
-!roc_curve/
+roc_curve/其他行业/*
+roc_curve/制造业/*
 
 # model files
-features_model/*
-!features_model/
-model/*
-!model/
+features_model/其他行业/*
+features_model/制造业/*
+model/其他行业/*
+model/制造业/*
 
 
 # bash file
