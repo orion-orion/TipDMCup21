@@ -2,7 +2,7 @@
 Descripttion: 负责调用最终的Bagging模型(已用所有数据训练)预测第6年的数据
 Version: 1.0
 Date: 2021-03-31 20:21:21
-LastEditTime: 2021-05-05 15:26:59
+LastEditTime: 2022-04-19 19:43:10
 '''
 import config
 import os

@@ -1,8 +1,10 @@
 '''
-Descripttion: 项目参数和模型超参数配置
+Descripttion: 
 Version: 1.0
+Author: ZhangHongYu
 Date: 2021-03-24 09:33:40
-LastEditTime: 2021-05-05 15:28:16
+LastEditors: ZhangHongYu
+LastEditTime: 2022-04-19 19:42:34
 '''
 import tensorflow as tf
 
@@ -68,7 +70,7 @@ dcrn_params={
     "其他行业":dcrn_params_2
 }
 # 交叉验证折数
-num_splits = 2
+num_splits = 4
 
 
 #制造业模型的compiled方法损失函数及优化器选项，注意：loss函数为交叉熵损失不能改动

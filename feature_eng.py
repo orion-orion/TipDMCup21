@@ -2,7 +2,7 @@
 Descripttion: 特征工程相关内容，包括数据预处理和特征选择等
 Version: 1.0
 Date: 2021-02-18 13:15:08
-LastEditTime: 2021-05-05 15:26:05
+LastEditTime: 2022-04-19 19:36:08
 '''
 import pandas as pd
 import config
@@ -101,19 +101,20 @@ def get_ticker_symbol_dict(data1):
 
 
 #用模型对特征重要性进行排序，挖掘top-30的重要特征
-def feature_importance_rank(X, y, flag, indus):
+def feature_importance_rank(X, y, indus, mod):
 
     features_model_save_direct = os.path.join(config.features_model_root, indus)
     features_imp_save_direct = os.path.join(config.features_imp_root, indus)
 
 
     if not os.path.exists(features_model_save_direct):
-        os.mkdir(features_model_save_direct)
-    
+        os.makedirs(features_model_save_direct)
+        
     if not os.path.exists(features_imp_save_direct):
-        os.mkdir(features_imp_save_direct)
+        os.makedirs(features_imp_save_direct)
 
-    if flag == 'train': #如果是对训练集进行特征选择
+    avg_feature_imp = {}
+    if mod == 'retrain': #如果是对训练集进行特征选择
         # SMOTE过采样
         smo = SMOTE(random_state=42, n_jobs=-1 )
         X_sampling,  y_sampling = smo.fit_resample(X, y)
@@ -124,31 +125,47 @@ def feature_importance_rank(X, y, flag, indus):
                 model_grids[name].fit(X_sampling, y_sampling)
                 joblib.dump(model_grids[name], os.path.join(features_model_save_direct, name +'.json'))
                 print(" features selection model %s has been trained " % (name))
+                model_grid = model_grids[name]
+                features_imp_sorted = pd.DataFrame({'feature': list(X),
+                                                    'importance': model_grid.best_estimator_.feature_importances_}).sort_values('importance', ascending=False)
+                features = features_imp_sorted['feature'].to_list()
+                features_imp =  features_imp_sorted['importance'].to_list()
+                for feature, imp in zip(features, features_imp):
+                    if feature not in avg_feature_imp.keys():
+                        avg_feature_imp.update({feature:imp})
+                    else:
+                        avg_feature_imp[feature] += imp
+                features_top_n =  features_imp_sorted.head(config.top_n)['feature']
+                features_top_n_imp =  features_imp_sorted.head(config.top_n)['importance']
+                features_output = pd.DataFrame({'features_top_n':features_top_n, 'importance':features_top_n_imp})
+                features_output.to_csv(os.path.join(features_imp_save_direct, name+'_top_n_features_importance.csv'), index=False)
 
-    # 加载用于特征选择的模型并选出top-30的特征
-    avg_feature_imp = {}
-    features_top_n_list = []
-    for name, _ in model_grids.items():
-        features_model_save_path = os.path.join(config.features_model_root, indus, name+'.json')
-        if not os.path.exists(features_model_save_path):
-            raise IOError("Cant find the path %s!" % features_model_save_path)
-        
-        model_grids[name] = joblib.load(features_model_save_path) 
-        model_grid = model_grids[name]
-        features_imp_sorted = pd.DataFrame({'feature': list(X),
-                                            'importance': model_grid.best_estimator_.feature_importances_}).sort_values('importance', ascending=False)
-        features = features_imp_sorted['feature'].to_list()
-        features_imp =  features_imp_sorted['importance'].to_list()
-        for feature, imp in zip(features, features_imp):
-            if feature not in avg_feature_imp.keys():
-                avg_feature_imp.update({feature:imp})
-            else:
-                avg_feature_imp[feature] += imp
-        features_top_n =  features_imp_sorted.head(config.top_n)['feature']
-        features_top_n_imp =  features_imp_sorted.head(config.top_n)['importance']
-        features_output = pd.DataFrame({'features_top_n':features_top_n, 'importance':features_top_n_imp})
-        features_output.to_csv(os.path.join(features_imp_save_direct, name+'_top_n_features_importance.csv'), index=False)
 
+    elif mod == "load":
+        # 加载用于特征选择的模型并选出top-30的特征
+        for name, _ in model_grids.items():
+            features_model_save_path = os.path.join(config.features_model_root, indus, name+'.json')
+            if not os.path.exists(features_model_save_path):
+                raise IOError("Cant find the path %s!" % features_model_save_path)
+            
+            model_grids[name] = joblib.load(features_model_save_path) 
+            model_grid = model_grids[name]
+            features_imp_sorted = pd.DataFrame({'feature': list(X),
+                                                'importance': model_grid.best_estimator_.feature_importances_}).sort_values('importance', ascending=False)
+            features = features_imp_sorted['feature'].to_list()
+            features_imp =  features_imp_sorted['importance'].to_list()
+            for feature, imp in zip(features, features_imp):
+                if feature not in avg_feature_imp.keys():
+                    avg_feature_imp.update({feature:imp})
+                else:
+                    avg_feature_imp[feature] += imp
+            features_top_n =  features_imp_sorted.head(config.top_n)['feature']
+            features_top_n_imp =  features_imp_sorted.head(config.top_n)['importance']
+            features_output = pd.DataFrame({'features_top_n':features_top_n, 'importance':features_top_n_imp})
+            features_output.to_csv(os.path.join(features_imp_save_direct, name+'_top_n_features_importance.csv'), index=False)
+    else:
+        raise IOError("invalid mod!") 
+    
     # 对所有模型预测的结果做平均
     for feature in avg_feature_imp.keys():
         avg_feature_imp[feature] /= 4
