@@ -7,6 +7,10 @@ __pycache__/
 # data files
 # data/*.csv
 
+# roc_curve_pic
+roc_curve/*
+!roc_curve/
+
 # model files
 features_model/*
 !features_model/
