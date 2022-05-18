@@ -1,0 +1,8 @@
+pandas
+imblearn
+matplotlib 
+numpy==1.19.5  
+scikit-learn==1.1.0
+xgboost==1.5.1
+tensorflow-gpu==2.4.1
+
