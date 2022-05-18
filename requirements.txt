@@ -1,8 +1,10 @@
+numpy==1.19.5
+scipy  
 pandas
-imblearn
-matplotlib 
-numpy==1.19.5  
+matplotlib
+joblib
 scikit-learn==1.1.0
+imblearn
 xgboost==1.5.1
 tensorflow-gpu==2.4.1
 
