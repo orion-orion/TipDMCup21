@@ -2,7 +2,7 @@
 Descripttion: k折交叉验证
 Version: 1.0
 Date: 2021-03-31 20:21:21
-LastEditTime: 2021-05-05 15:28:23
+LastEditTime: 2022-05-18 14:06:31
 '''
 import config
 import numpy as np
@@ -19,7 +19,7 @@ from bagging import Bagging
 # plt.rcParams['font.sans-serif'] = ['SimHei'] # 步骤一（替换sans-serif字体）
 # plt.rcParams['axes.unicode_minus'] = False  # 步骤二（解决坐标轴负数的负号显示问题）
 
-def bagging_k_fold_cross_valid(X_train, y_train, indus):
+def bagging_k_fold_cross_valid(X_train, y_train, indus, mod):
     model_save_direct = os.path.join(config.model_root, indus, "dcrn_k_fold")
     final_model_save_direct = os.path.join(config.model_root, indus, "dcrn_final")
     if not os.path.exists(model_save_direct):
@@ -53,12 +53,17 @@ def bagging_k_fold_cross_valid(X_train, y_train, indus):
         # 进行T次bootstrap采样，训练T个bagging基分类器
         bagging_model = Bagging(config.num_base_model[indus], **config.dcrn_params[indus])
         bagging_model.compile(**config.compiled_params[indus])
-        config.fit_params[indus]['validation_data'] = (valid_X, valid_y)
-        stop_epoch_sum += bagging_model.fit(train_X, train_y, **config.fit_params[indus])
-
-        bagging_model.save(os.path.join(model_save_direct, f"{i}th_fold"))
         
-        bagging_model.load(os.path.join(model_save_direct, f"{i}th_fold"))
+        if mod == "retrain": # 如果需要重新训练模型 
+            config.fit_params[indus]['validation_data'] = (valid_X, valid_y)
+            stop_epoch_sum += bagging_model.fit(train_X, train_y, **config.fit_params[indus])
+
+            bagging_model.save(os.path.join(model_save_direct, f"{i}th_fold"))
+        
+        k_fold_model_path = os.path.join(model_save_direct, f"{i}th_fold")
+        if not os.path.exists(k_fold_model_path):
+            raise IOError("Cant find the k_fold model directory %s" % k_fold_model_path)
+        bagging_model.load(k_fold_model_path)
         # 此处采用先将预测结果存起来最后再评估的方式
         # evaluate_res = bagging_model.evaluate(valid_X, valid_y, **config.evaluate_params)
 

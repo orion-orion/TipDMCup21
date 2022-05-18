@@ -2,7 +2,7 @@
 Descripttion: 项目主要流程和数据pipline
 Version: 1.0
 Date: 2021-03-24 09:33:40
-LastEditTime: 2022-04-19 20:28:43
+LastEditTime: 2022-05-18 10:35:36
 '''
 import tensorflow as tf
 
@@ -62,12 +62,12 @@ if __name__ == '__main__':
 
         X_train, y_train = np.array(X_train, dtype=np.float32), np.array(y_train, dtype=np.int64)
 
+        
+    # 采用交叉验证法对深度学习模型进行交叉验证和参数调优
+    bagging_k_fold_cross_valid(X_train, y_train, indus, mod=args.main_model)
+
 
     if args.main_model == 'retrain': #如果要求重新训练模型
-        
-        # 采用交叉验证法对深度学习模型进行交叉验证和参数调优
-        bagging_k_fold_cross_valid(X_train, y_train, indus)
-
         # 采用全部数据集对模型进行训练
         bagging_train_final(X_train, y_train, indus)
 
