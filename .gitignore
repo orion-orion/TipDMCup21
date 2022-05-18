@@ -7,16 +7,11 @@ __pycache__/
 # data files
 # data/*.csv
 
-# roc_curve_pic
-roc_curve/其他行业/*
-roc_curve/制造业/*
-
 # model files
 features_model/其他行业/*
 features_model/制造业/*
 model/其他行业/*
 model/制造业/*
-
 
 # bash file
 run.sh
